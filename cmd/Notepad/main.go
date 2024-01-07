@@ -6,7 +6,6 @@ import (
 	"notepad/internal/config"
 	"notepad/internal/storage/postgres"
 
-	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -25,27 +24,16 @@ func main() {
 	_ = cfg
 	logger.Info("successfull config setup")
 
-	db, err := postgres.New()
+	db, err := postgres.New(cfg.DataBase.Host, cfg.DataBase.User, cfg.DataBase.Password, cfg.DataBase.Dbname, cfg.DataBase.Port)
 	if err != nil {
 		logger.Fatal("can not connect with database", zap.Error(err))
 	}
+	logger.Info("successfull database setup")
 	_ = db
+
+	mux := http.NewServeMux()
+	_ = mux
 	//Подключаем все обработчики ручек и эндпоинты
-
-	srv := &http.Server{
-		Addr: cfg.Address,
-		// Handler:      router,
-		ReadTimeout:  cfg.HTTPServer.Timeout,
-		WriteTimeout: cfg.HTTPServer.Timeout,
-		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
-	}
-
-	logger.Info("http server started")
-
-	//TODO: graceful shutdown
-	if err := srv.ListenAndServe(); err != nil {
-		logger.Fatal("server stopped")
-	}
 }
 
 func setupZapLogger() (*zap.Logger, error) {

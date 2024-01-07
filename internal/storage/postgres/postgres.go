@@ -4,23 +4,15 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-)
 
-//TODO: make all vars from env file or config
-
-const (
-	host     = "localhost"
-	port     = 8089
-	user     = "postgres"
-	password = "vany2003"
-	dbname   = "Notepad"
+	_ "github.com/lib/pq"
 )
 
 type Storage struct {
 	db *sql.DB
 }
 
-func New() (*Storage, error) {
+func New(host, user, password, dbname string, port int) (*Storage, error) {
 	const op = "internal.storage.postgresql.New"
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
